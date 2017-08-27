@@ -1,7 +1,3 @@
-
-// var canvas = document.getElementById('table-canvas');
-// var context = canvas.getContext('2d');
-
 var canvas;
 var	context;
 // width and height of canvas
@@ -22,10 +18,6 @@ function paintCanvas() {
 	context.fillRect(0, 0, W, H);
 }
 
-// context.beginPath();
-// context.lineWidth = 4;
-// context.strokeStyle = 'white';
-// context.strokeRect(25, 25, 700, 550);
 
 // Draws the game board (boundaries)
 function drawBoundaries() {
@@ -100,24 +92,59 @@ function onKeyDown(e) {
 var human = new Paddle(50, 250);
 var computer = new Paddle(735, 250);
 
+// Function to generate random number (between -5 and 5) for the initial y component of the velocity
+// The initial x component of velocity will be the same in all cases
+function randomVelocity() {
+	var num = Math.floor(Math.random() * 5) + 1; // this will get a number between 1 and 5;
+	num *= Math.floor(Math.random() * 2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
+	return num;
+}
 
 // Ball Object Constructor
-function Ball(x,y){
-  this.xPos = x;
-  this.yPos = y;
+function Ball(){
+  this.x = W/2;
+  this.y = H/2;
   this.color = "white";
   this.radius = 8;
+	this.speed = 2;
+
+// this.edge = {
+// 		right: this.x + 10,
+// 		left: this.x - 10,
+// 		top: this.y - 10,
+// 		bottom: this.y + 10
+// 	};
+
+	this.velocity_x = randomVelocity();
+	this.velocity_y = randomVelocity();
+
 };
+
 
 Ball.prototype.render = function(){
   context.fillStyle = this.color;
   context.beginPath();
-  context.arc(this.xPos, this.yPos, this.radius, 0, 2*Math.PI, false);
+  context.arc(this.x, this.y, this.radius, 0, 2*Math.PI, false);
+
+	this.x += this.velocity_x * this.speed;
+	this.y += this.velocity_y * this.speed;
+
+	if ((this.y <= 33) || (this.y >= 567)) {
+		this.velocity_y *= -1;
+	}
+
+	if((this.x <= human.x + 23) && (this.x >= human.x + 8) &&(this.y >= human.y)&&(this.y <= human.y +100)){
+		if(this.velocity_x < 0){
+			this.velocity_x *= -1;
+		}
+	}
+
+
   context.fill();
 };
 
 // Declaring a new ball
-var ball = new Ball(380,280);
+var ball = new Ball();
 
 var render = function () {
 	paintCanvas();
@@ -136,10 +163,10 @@ function step(){
 
 // Animate function
 var animate = window.requestAnimationFrame ||
-	window.webkitRequestAnimationFrame ||
-	window.mozRequestAnimationFrame ||
-	window.oRequestAnimationFrame ||
-	window.msRequestAnimationFrame ||
+	// window.webkitRequestAnimationFrame ||
+	// window.mozRequestAnimationFrame ||
+	// window.oRequestAnimationFrame ||
+	// window.msRequestAnimationFrame ||
 	function (callback) {
 		window.setTimeout(callback, 1000 / 60);
 	};
