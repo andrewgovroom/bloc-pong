@@ -31,22 +31,6 @@ function addKeyEvents() {
 	window.addEventListener('keydown', onKeyDown, true);
 }
 
-
-//
-// function Paddle(x,y){
-//   this.xPos = x;
-//   this.yPos = y;
-//   this.width = 12;
-//   this.height = 90;
-//   this.color = "white";
-// };
-//
-// Paddle.prototype.render = function(){
-//   context.beginPath();
-//   context.fillStyle = this.color;
-//   context.fillRect(this.xPos, this.yPos, this.width, this.height);
-// };
-
 // Player Object constructor
 function Paddle(x, y) {
 	this.x = x;
@@ -54,7 +38,7 @@ function Paddle(x, y) {
 	this.color = "White";
 	this.width = 15;
 	this.height = 100;
-	this.speed = 10;
+	this.speed = 20;
 	// Move the vertical distance 'dy'
 	this.move = function (dy) {
 		// clear the current rectangle
@@ -68,6 +52,10 @@ function Paddle(x, y) {
 	};
 }
 
+
+// Declaring a human and computer paddle
+var human = new Paddle(50, 250);
+var computer = new Paddle(735, 250);
 
 function onKeyDown(e) {
 	// up arrow
@@ -88,9 +76,21 @@ function onKeyDown(e) {
 	}
 }
 
-// Declaring a human and computer paddle
-var human = new Paddle(50, 250);
-var computer = new Paddle(735, 250);
+
+function compMove(){
+	if((ball.x < 0) || (ball.x > 800)) {
+		return;
+	}
+	if((computer.y + 50 <= ball.y) && (computer.y <= 465)){
+		computer.move(3);
+	}
+	if((computer.y + 50 >= ball.y) && (computer.y >= 35)){
+		computer.move(-3);
+	}
+
+};
+
+
 
 // Function to generate random number (between -5 and 5) for the initial y component of the velocity
 // The initial x component of velocity will be the same in all cases
@@ -133,12 +133,32 @@ Ball.prototype.render = function(){
 		this.velocity_y *= -1;
 	}
 
-	if((this.x <= human.x + 23) && (this.x >= human.x + 8) &&(this.y >= human.y)&&(this.y <= human.y +100)){
+	if((this.x <= human.x + 23) && (this.x >= human.x + 8) && (this.y >= human.y) && (this.y <= human.y +100)){
 		if(this.velocity_x < 0){
 			this.velocity_x *= -1;
 		}
 	}
 
+	if((this.x >= computer.x - 8) && (this.x <= computer.x) && (this.y >= computer.y) && (this.y <= computer.y +100)){
+		if(this.velocity_x > 0){
+			this.velocity_x *= -1;
+		}
+	}
+
+	// detect when the computer scores a point
+		// reset the ball position to the middle and generate another random x and y velocity
+	if((this.x <= 0) || (this.x >= 800)){
+		// reset this.x
+		this.x = W/2;
+		// reset this.y
+		this.y = H/2;
+
+		// get a new this.velocity_x and this.velocity_y
+		this.velocity_x = randomVelocity();
+		this.velocity_y = randomVelocity();
+	}
+	// detect when the player scores a point
+		// reset the ball position to the middle and generate another random x and y velocity
 
   context.fill();
 };
@@ -149,10 +169,12 @@ var ball = new Ball();
 var render = function () {
 	paintCanvas();
 	drawBoundaries();
+	compMove();
 	human.render();
 	computer.render();
 	ball.render();
 	// redraw
+
 	animate(render);
 };
 
