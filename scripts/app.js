@@ -173,6 +173,7 @@ Ball.prototype.render = function(){
 	}
 
 	if (this.x >= 800) {
+
 		human_score += 1;
 		document.getElementById("humsc").textContent = human_score;
 		// reset this.x
@@ -202,6 +203,17 @@ var render = function () {
 	computer.render();
 	ball.render();
 	// redraw
+	if(comp_score === 11){
+		document.getElementById("gg").textContent = "GAME OVER! You Lost!";
+		document.getElementById("gg2").textContent = "Please refresh the page to play again.";
+		return;
+	}
+
+	if(human_score === 11){
+		document.getElementById("gg").textContent = "GAME OVER! You Won!";
+		document.getElementById("gg2").textContent = "Please refresh the page to play again.";
+		return;
+	}
 
 	animate(render);
 };
