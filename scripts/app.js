@@ -4,6 +4,13 @@ var	context;
 var W = 800,
 		H = 600;
 
+var human_score = 0;
+var comp_score = 0;
+
+
+
+
+
 // Initialize the game canvas
 function init(){
 	canvas = document.getElementById('table-canvas');
@@ -38,7 +45,7 @@ function Paddle(x, y) {
 	this.color = "White";
 	this.width = 15;
 	this.height = 100;
-	this.speed = 20;
+	this.speed = 30;
 	// Move the vertical distance 'dy'
 	this.move = function (dy) {
 		// clear the current rectangle
@@ -56,6 +63,10 @@ function Paddle(x, y) {
 // Declaring a human and computer paddle
 var human = new Paddle(50, 250);
 var computer = new Paddle(735, 250);
+
+
+
+
 
 function onKeyDown(e) {
 	// up arrow
@@ -82,10 +93,10 @@ function compMove(){
 		return;
 	}
 	if((computer.y + 50 <= ball.y) && (computer.y <= 465)){
-		computer.move(3);
+		computer.move(4);
 	}
 	if((computer.y + 50 >= ball.y) && (computer.y >= 35)){
-		computer.move(-3);
+		computer.move(-4);
 	}
 
 };
@@ -147,7 +158,10 @@ Ball.prototype.render = function(){
 
 	// detect when the computer scores a point
 		// reset the ball position to the middle and generate another random x and y velocity
-	if((this.x <= 0) || (this.x >= 800)){
+	if(this.x <= 0){
+
+		comp_score += 1;
+		document.getElementById("comsc").textContent = comp_score;
 		// reset this.x
 		this.x = W/2;
 		// reset this.y
@@ -156,6 +170,20 @@ Ball.prototype.render = function(){
 		// get a new this.velocity_x and this.velocity_y
 		this.velocity_x = randomVelocity();
 		this.velocity_y = randomVelocity();
+	}
+
+	if (this.x >= 800) {
+		human_score += 1;
+		document.getElementById("humsc").textContent = human_score;
+		// reset this.x
+		this.x = W/2;
+		// reset this.y
+		this.y = H/2;
+
+		// get a new this.velocity_x and this.velocity_y
+		this.velocity_x = randomVelocity();
+		this.velocity_y = randomVelocity();
+
 	}
 	// detect when the player scores a point
 		// reset the ball position to the middle and generate another random x and y velocity
@@ -192,6 +220,9 @@ var animate = window.requestAnimationFrame ||
 	function (callback) {
 		window.setTimeout(callback, 1000 / 60);
 	};
+
+
+
 
 window.onload = function () {
 	init();

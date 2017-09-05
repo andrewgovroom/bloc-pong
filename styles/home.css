@@ -10,3 +10,12 @@
 	margin-top:10%;
 	background-color:Green;
 }
+
+
+#ps #humsc {
+	display: inline;
+}
+
+#cs #comsc {
+	display: inline;
+}
